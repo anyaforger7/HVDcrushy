@@ -8,6 +8,7 @@ body {
     height: 100vh;
     font-family: 'Georgia', 'Times New Roman', serif;
     text-align: center;
+    touch-action: none; /* Prevents mobile scrolling */
 }
 
 #container {
@@ -18,34 +19,35 @@ body {
 
 canvas {
     display: block;
+    width: 100%;  /* THIS FIXES THE ZOOM ISSUE */
+    height: 100%; /* THIS FIXES THE ZOOM ISSUE */
     image-rendering: optimizeQuality; 
 }
 
 .message {
     position: absolute;
-    top: 75%; /* Moved down slightly so it doesn't overlap the flowers on mobile */
+    top: 80%; /* Moved down so it sits below the bouquet */
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
     opacity: 0;
     transition: opacity 4s ease-in-out; 
     z-index: 10;
-    width: 90vw; /* Keeps text from touching screen edges */
+    width: 90vw;
 }
 
 .message h1 {
-    /* clamp(minimum_size, preferred_size, maximum_size) */
-    font-size: clamp(2rem, 7vw, 3.5rem); 
+    font-size: clamp(2rem, 6vw, 3.5rem); /* Resizes font for phone vs laptop */
     margin: 5px;
     color: #d45d79; 
     text-shadow: 0 0 15px rgba(255, 182, 193, 0.8); 
-    white-space: normal; /* Allows text to drop to a second line on small phones */
+    white-space: normal;
 }
 
 .message h2 {
     font-size: clamp(1.2rem, 4vw, 2rem);
     margin-top: -10px;
-    font-weight: bold; /* Fixed this from font-style to font-weight */
+    font-weight: bold;
     color: #93748A; 
     letter-spacing: 2px;
 }
@@ -60,7 +62,7 @@ canvas {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: #EAD7D1; /* Matched the background color */
+    background: #EAD7D1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +74,7 @@ canvas {
     background-color: #d45d79;
     color: white;
     font-family: 'Georgia', serif;
-    font-size: clamp(1rem, 4vw, 1.5rem); /* Responsive button text */
+    font-size: clamp(1rem, 4vw, 1.5rem);
     padding: 15px 35px;
     border: none;
     border-radius: 50px;
