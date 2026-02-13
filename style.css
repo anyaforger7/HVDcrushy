@@ -26,7 +26,7 @@ canvas {
 
 .message {
     position: absolute;
-    top: 80%; /* Moved down so it sits below the bouquet */
+    top: 25%; /* Moved down so it sits below the bouquet */
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -87,6 +87,7 @@ canvas {
     background-color: #bf4d68;
     transform: scale(1.05); 
 }
+
 
 
 
