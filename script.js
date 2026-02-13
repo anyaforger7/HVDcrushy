@@ -14,10 +14,9 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// --- Configuration ---
 let globalProgress = 0;
 const animationSpeed = 0.0015;
-const totalLayers = 5; // Increased to make the flowers look like real carnations!
+const totalLayers = 15; // Perfect balance for fluffiness and mobile performance
 
 const flowers = [
     { x: 0, y: -0.15, scale: 0.85, startDelay: 0 },       
@@ -40,7 +39,7 @@ function drawStem(startX, startY, handleX, handleTopY, stemBottomY, scaleMultipl
     ctx.lineTo(handleX, stemBottomY);
     
     ctx.strokeStyle = '#5a7d4a';
-    ctx.lineWidth = 6 * scaleMultiplier; // Stem thickness scales with screen
+    ctx.lineWidth = 6 * scaleMultiplier; 
     ctx.lineCap = 'round';
     ctx.stroke();
     ctx.restore();
@@ -52,13 +51,12 @@ function drawPaperWrapping(handleX, handleTopY, handleBottomY, progress, scaleMu
     if (wrapAlpha <= 0) { ctx.restore(); return; }
     ctx.globalAlpha = wrapAlpha;
 
-    // Scale all paper dimensions based on the screen size
     const paperTopY = handleTopY - 100 * scaleMultiplier; 
     const paperBottomY = handleBottomY + 20 * scaleMultiplier; 
     const paperTopWidth = 280 * scaleMultiplier;
     const paperBottomWidth = 80 * scaleMultiplier;
 
-    // 1. Draw Pink Inner Paper
+    // Pink Inner Paper
     ctx.fillStyle = '#eab6c0'; 
     ctx.beginPath();
     ctx.moveTo(handleX - paperTopWidth/2 + 20*scaleMultiplier, paperTopY + 30*scaleMultiplier); 
@@ -68,7 +66,7 @@ function drawPaperWrapping(handleX, handleTopY, handleBottomY, progress, scaleMu
     ctx.closePath();
     ctx.fill();
 
-    // 2. Draw White Outer Paper 
+    // White Outer Paper
     const whiteGrad = ctx.createLinearGradient(handleX - paperTopWidth/2, paperTopY, handleX + paperTopWidth/2, paperBottomY);
     whiteGrad.addColorStop(0, '#fdfdfd');
     whiteGrad.addColorStop(0.4, '#f0f0f0'); 
@@ -84,7 +82,6 @@ function drawPaperWrapping(handleX, handleTopY, handleBottomY, progress, scaleMu
     ctx.closePath();
     ctx.fill();
 
-    // Crease line
     ctx.strokeStyle = '#e0e0e0';
     ctx.lineWidth = 1.5 * scaleMultiplier;
     ctx.beginPath();
@@ -92,7 +89,7 @@ function drawPaperWrapping(handleX, handleTopY, handleBottomY, progress, scaleMu
     ctx.lineTo(handleX, paperBottomY - 30*scaleMultiplier);
     ctx.stroke();
 
-    // 3. Draw Pink Ribbon
+    // Pink Ribbon
     const ribbonY = handleBottomY - 40 * scaleMultiplier;
     const ribbonWidth = paperBottomWidth + 10 * scaleMultiplier;
     const ribbonHeight = 25 * scaleMultiplier;
@@ -100,7 +97,7 @@ function drawPaperWrapping(handleX, handleTopY, handleBottomY, progress, scaleMu
     ctx.fillStyle = '#e9a8b5'; 
     ctx.fillRect(handleX - ribbonWidth/2, ribbonY - ribbonHeight/2, ribbonWidth, ribbonHeight);
 
-    // Ribbon Bow
+    // Bow
     ctx.beginPath();
     ctx.moveTo(handleX, ribbonY);
     ctx.quadraticCurveTo(handleX - 40*scaleMultiplier, ribbonY - 30*scaleMultiplier, handleX - 50*scaleMultiplier, ribbonY + 10*scaleMultiplier); 
@@ -109,7 +106,6 @@ function drawPaperWrapping(handleX, handleTopY, handleBottomY, progress, scaleMu
     ctx.quadraticCurveTo(handleX + 10*scaleMultiplier, ribbonY + 5*scaleMultiplier, handleX, ribbonY);
     ctx.fill();
     
-    // Bow knot center
     ctx.fillStyle = '#d897a4'; 
     ctx.beginPath();
     ctx.arc(handleX, ribbonY, 8 * scaleMultiplier, 0, Math.PI * 2);
@@ -117,11 +113,11 @@ function drawPaperWrapping(handleX, handleTopY, handleBottomY, progress, scaleMu
     ctx.restore();
 }
 
-function drawFlower(centerX, centerY, flower, progress) {
+function drawFlower(centerX, centerY, flower, progress, scaleMultiplier) {
     ctx.save();
     ctx.translate(centerX, centerY);
 
-    const maxFlowerSize = Math.min(width, height) * 0.22 * flower.scale;
+    const maxFlowerSize = Math.min(width, height) * 0.22 * flower.scale * scaleMultiplier;
 
     for (let i = totalLayers - 1; i >= 0; i--) {
         const inverseI = totalLayers - 1 - i;
@@ -170,44 +166,42 @@ function animate() {
     globalProgress += animationSpeed;
     if (globalProgress > 1.5) globalProgress = 1.5; 
 
-    // Create a base multiplier based on screen size (800 is our baseline desktop height)
-    let baseScale = Math.min(width, height) / 800;
-    
-    // Ensure it doesn't get too small on tiny phones or too big on giant monitors
-    if (baseScale < 0.6) baseScale = 0.6; 
+    const minDimension = Math.min(width, height);
+    let baseScale = minDimension / 600; 
+    if (baseScale < 0.45) baseScale = 0.45; 
     if (baseScale > 1.2) baseScale = 1.2;
 
-    const handleX = width / 2;
-    const handleTopY = height * 0.50; // Shifted up slightly for mobile screens
-    const handleBottomY = height * 0.75;
-    const stemBottomY = height * 0.85;
+    const centerXGlobal = width / 2;
+    const centerYGlobal = height / 2;
+
+    const handleX = centerXGlobal;
+    const handleTopY = centerYGlobal + (50 * baseScale); 
+    const handleBottomY = centerYGlobal + (220 * baseScale);
+    const stemBottomY = centerYGlobal + (280 * baseScale);
 
     let allFinished = true;
 
-    // 1. Draw Stems
     flowers.forEach((flower, index) => {
         let flowerProgress = (globalProgress - flower.startDelay) * 1.2;
         if (flowerProgress > 0.05) {
-            const centerX = width / 2 + flower.x * Math.min(width, height);
-            const centerY = height / 2 + flower.y * Math.min(width, height) - height * 0.15;
+            const centerX = centerXGlobal + flower.x * minDimension * 0.9;
+            const centerY = handleTopY - (120 * baseScale) + flower.y * minDimension * 0.9;
             const stemOffsetX = handleX + (index - 3) * (5 * baseScale); 
             drawStem(centerX, centerY, stemOffsetX, handleTopY, stemBottomY, baseScale);
         }
     });
 
-    // 2. Draw Wrapping
     drawPaperWrapping(handleX, handleTopY, handleBottomY, globalProgress, baseScale);
 
-    // 3. Draw Flowers
     flowers.forEach((flower) => {
         let flowerProgress = (globalProgress - flower.startDelay) * 1.2;
         if (flowerProgress < 0) flowerProgress = 0;
         if (flowerProgress > 1) flowerProgress = 1;
         
         if (flowerProgress > 0) {
-            const centerX = width / 2 + flower.x * Math.min(width, height);
-            const centerY = height / 2 + flower.y * Math.min(width, height) - height * 0.15;
-            drawFlower(centerX, centerY, flower, flowerProgress);
+            const centerX = centerXGlobal + flower.x * minDimension * 0.9;
+            const centerY = handleTopY - (120 * baseScale) + flower.y * minDimension * 0.9;
+            drawFlower(centerX, centerY, flower, flowerProgress, baseScale);
         }
 
         if (flowerProgress < 1) allFinished = false;
@@ -222,7 +216,6 @@ function animate() {
     }
 }
 
-// --- MUSIC AND START LOGIC ---
 const startScreen = document.getElementById('startScreen');
 const startBtn = document.getElementById('startBtn');
 const bgMusic = document.getElementById('bgMusic');
@@ -238,5 +231,4 @@ startBtn.addEventListener('click', () => {
         startScreen.style.display = 'none';
         animate(); 
     }, 1000); 
-
 });
