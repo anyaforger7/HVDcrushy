@@ -37,7 +37,7 @@ canvas {
 }
 
 .message h1 {
-    font-size: clamp(2rem, 4.5vw, 3rem); /* Resizes font for phone vs laptop */
+    font-size: clamp(1.8rem, 4.2vw, 2.8rem); /* Resizes font for phone vs laptop */
     margin: 5px;
     color: #d45d79; 
     text-shadow: 0 0 15px rgba(255, 182, 193, 0.8); 
@@ -87,6 +87,7 @@ canvas {
     background-color: #bf4d68;
     transform: scale(1.05); 
 }
+
 
 
 
