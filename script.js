@@ -17,7 +17,7 @@ resize();
 // --- Configuration ---
 let globalProgress = 0;
 const animationSpeed = 0.0015;
-const totalLayers = 45; // Increased to make the flowers look like real carnations!
+const totalLayers = 5; // Increased to make the flowers look like real carnations!
 
 const flowers = [
     { x: 0, y: -0.15, scale: 0.85, startDelay: 0 },       
@@ -238,4 +238,5 @@ startBtn.addEventListener('click', () => {
         startScreen.style.display = 'none';
         animate(); 
     }, 1000); 
+
 });
